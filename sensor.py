@@ -57,6 +57,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     inkbird_devices = []
 
     for device in config['devices']:
+        mac = device['mac']
         for parameter in device['monitored_conditions']:
             name = SENSOR_TYPES[parameter][1]
             uom = SENSOR_TYPES[parameter][2]
@@ -67,13 +68,13 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
             entity_name = re.sub(' ', '_', name.lower())
 
             if parameter == "temperature":
-                inkbird_devices.append( InkbirdThermalSensor(device['mac'], uom, name, entity_name) )
+                inkbird_devices.append( InkbirdThermalSensor(mac, uom, name, entity_name) )
             elif parameter == "humidity":
-                inkbird_devices.append( InkbirdHumiditySensor(device['mac'], uom, name, entity_name) )
+                inkbird_devices.append( InkbirdHumiditySensor(mac, uom, name, entity_name) )
             else:
-                inkbird_devices.append( InkbirdBatterySensor(device['mac'], uom, name, entity_name) )
+                inkbird_devices.append( InkbirdBatterySensor(mac, uom, name, entity_name) )
 
-    inkbird_devices.append( InkbirdUpdater(hass, inkbird_devices) )
+    inkbird_devices.append( InkbirdUpdater(hass, mac, inkbird_devices) )
     add_entities(inkbird_devices, True)
 
 
@@ -81,12 +82,12 @@ class InkbirdUpdater(Entity):
 
     entity_id = "inkbird.updater"
 
-    def __init__(self, hass, inkbird_devices):
+    def __init__(self, hass, mac, inkbird_devices):
         """Initialize the thermometer."""
         Entity.__init__(self)
         self._name = 'Inkbird Updater'
         self._state = None
-        self._mac = None
+        self._mac = mac
         self.hass = hass
         self.scanner = Scanner()
         self.scanner.clear()
@@ -124,8 +125,7 @@ class InkbirdUpdater(Entity):
         if self.no_results_counter >= 5:
             _LOGGER.error("Btle went away .. restarting entire btle stack")
             self.scanner = Scanner()
-            self.scanner.clear()
-            self.scanner.start()
+            self.scanner.scan()
             self.no_results_counter = 0
 
         try:
@@ -136,6 +136,8 @@ class InkbirdUpdater(Entity):
         results = self.scanner.getDevices()
         _LOGGER.debug(f"got results {results}")
         for dev in results:
+            if dev.addr != self._mac:
+                continue
             self.handleDiscovery(dev)
 
         # if we have no results at all, the scanner may have gone MIA.
