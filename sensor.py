@@ -7,6 +7,7 @@ import re
 from struct import unpack
 import signal
 import time
+import sys
 
 from bluepy import btle
 from bluepy.btle import BTLEException, Scanner, DefaultDelegate
