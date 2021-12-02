@@ -93,8 +93,6 @@ class InkbirdUpdater(Entity):
         self.parameter = "updater"
         self.hass = hass
         self.scanner = Scanner()
-        self.scanner.clear()
-        self.scanner.start()
         self.no_results_counter = 0
         self.inkbird_devices = inkbird_devices
 
@@ -127,14 +125,15 @@ class InkbirdUpdater(Entity):
         # The btle on my raspberry pi 4 seems to go MIA
         if self.no_results_counter >= 5:
             _LOGGER.error("Btle went away .. restarting entire btle stack")
+            self.scanner.stop()
+            self.scanner = None
             self.scanner = Scanner()
-            self.scanner.scan()
+            self.scanner.scan(timeout=8)
             self.no_results_counter = 0
 
         try:
-            self.scanner.process(timeout=8.0)
-        except:
-            e = sys.exc_info()[0]
+            self.scanner.scan(timeout=8)
+        except Exception as e:
             _LOGGER.error(f" Exception occoured during scanning: {e}")
         results = self.scanner.getDevices()
         _LOGGER.debug(f"got results {results}")

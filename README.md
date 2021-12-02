@@ -1,3 +1,6 @@
+# TODO
+- remove MAC address
+
 This repo adds support for the Inkbird IBS-TH1 under Home Assistant.
 
 ![Example Output inside Home Assistant](room-temps.png)
