@@ -3,7 +3,7 @@ This is a fork of https://github.com/stelford/home-assistant_inkbird .
 - Fixed a few bugs in the BLE scanner and updater
 - Simplified the logic to improve performance
 - Tested to be fully working with IBS-TH1 Plus and Home Assistant 2021.12.7
-- Added another helper script
+- Added another helper script and improved the existing ones to take inputs from args.
 
 Below is the original README.
 
