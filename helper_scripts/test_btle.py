@@ -4,8 +4,16 @@ from bluepy import btle
 from struct import unpack
 from sys import argv
 
-MAC = argv[1] if len(argv) == 2 else '49:42:06:00:2e:bd'
-print(MAC)
+if len(argv) < 2:
+    print('''
+Usage: ./test_btle.py xx:xx:xx:xx:xx:xx [00]
+Supply the device MAC address as the first arg, and optionally the characteristic channel number as the second arg (defaults to 36).
+    ''')
+    exit(1)
+
+MAC = argv[1]
+ch = argv[2] if len(argv) > 2 else 36
+print(f'Testing device: {MAC}')
 
 
 def scanDevices():
@@ -41,9 +49,9 @@ dev = btle.Peripheral(MAC)
 # iterateCharacteristics()
 
 
-# Characteristic fff2 seems to be temperature and humidity -> 0000fff2-0000-1000-8000-00805f9b34fb 
-# the fff2 has a read handle at 40 and (I am guessing here) a description handle at 39
-readings = dev.readCharacteristic(36)
+# Characteristic fff2 seems to be temperature and humidity -> something like 0000fff2-0000-1000-8000-00805f9b34fb.
+# This can be found in the output of the scan scripts.
+readings = dev.readCharacteristic(ch)
 print(f"raw readings is {readings}")
 temperature, humidity = unpack("<HH",readings[0:4])
 print(f"temperature is {temperature/100}")

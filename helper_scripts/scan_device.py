@@ -5,6 +5,7 @@ from bluepy.btle import Scanner
 
 if len(argv) < 2:
     print('Usage: ./scan_device.py xx:xx:xx:xx:xx:xx (device MAC address)')
+    exit(1)
 
 addr = argv[1]
 
