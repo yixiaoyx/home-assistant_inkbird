@@ -1,5 +1,13 @@
-# TODO
-- remove MAC address
+This is a fork of https://github.com/stelford/home-assistant_inkbird . 
+
+- Fixed a few bugs in the BLE scanner and updater
+- Simplified the logic to improve performance
+- Tested to be fully working with IBS-TH1 Plus and Home Assistant 2021.12.7
+- Added another helper script
+
+Below is the original README.
+
+-----
 
 This repo adds support for the Inkbird IBS-TH1 under Home Assistant.
 

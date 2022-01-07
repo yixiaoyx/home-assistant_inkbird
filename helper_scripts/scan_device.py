@@ -1,4 +1,12 @@
+#!/usr/bin/python3
+
+from sys import argv
 from bluepy.btle import Scanner
+
+if len(argv) < 2:
+    print('Usage: ./scan_device.py xx:xx:xx:xx:xx:xx (device MAC address)')
+
+addr = argv[1]
 
 scanner = Scanner()
 while True:
@@ -7,7 +15,7 @@ while True:
     results = scanner.getDevices()
     print(len(results))
     for dev in list(results):
-        if dev.addr != '49:42:06:00:2e:bd':
+        if dev.addr != addr:
             continue
         print(dev.addr)
         print(dev.getScanData())
